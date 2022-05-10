@@ -1,3 +1,5 @@
+using Blog.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,28 +18,70 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/posts", () => new List<Post>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    new()
+    {
+        Id = 1,
+        Title = "Title 1",
+        Content = "Some content",
+        Slug = "post-1",
+        CreatedOn = DateTime.Now,
+    },
+    new()
+    {
+        Id = 2,
+        Title = "Title 1",
+        Content = "Some content",
+        Slug = "post-1",
+        CreatedOn = DateTime.Now,
+    },
+    new()
+    {
+        Id = 3,
+        Title = "Title 1",
+        Content = "Some content",
+        Slug = "post-1",
+        CreatedOn = DateTime.Now,
+    },
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/posts/{slug}", (string slug) => new Post()
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    Id = 3,
+    Title = "Title 1",
+    Content = "Some content",
+    Slug = "post-1",
+    CreatedOn = DateTime.Now,
+});
+
+app.MapGet("/posts/{postId}/comments", (int postId) => new List<Comment>()
+{
+    new()
+    {
+        Author = "Author 1",
+        Text = "Commented some text",
+        CreatedOn = DateTime.Now,
+    },
+    new()
+    {
+        Author = "Author 2",
+        Text = "Commented some text",
+        CreatedOn = DateTime.Now,
+    },
+    new()
+    {
+        Author = "Author 3",
+        Text = "Commented some text",
+        CreatedOn = DateTime.Now,
+    },
+    new()
+    {
+        Author = "Author 4",
+        Text = "Commented some text",
+        CreatedOn = DateTime.Now,
+    },
+});
 
 app.Run();
 
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
