@@ -10,4 +10,6 @@ public class Post
     public string Title { get; set; }
     public string Content { get; set; }
     public DateTime CreatedOn { get; set; }
+
+    public List<Comment> Comments { get; set; } = new();
 }
