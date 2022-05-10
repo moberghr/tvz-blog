@@ -1,0 +1,71 @@
+﻿@page "/posts"
+@using Blog.Models
+
+<h3>Posts</h3>
+
+<a href="/posts/create" class="btn btn-primary">Create post</a>
+
+
+<div class="row mt-4">
+    @if (BlogPosts == null)
+    {
+        <div class="col">
+            <span class="spinner-border"></span>
+        </div>
+    } 
+    else if (!BlogPosts.Any())
+    {
+        <div class="alert alert-warning">No posts to show</div>
+    }
+    else
+    {
+        @foreach (var post in BlogPosts)
+        {
+            <div class="col-md-6">
+                <article class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <h3 class="mb-0">@post.Title</h3>
+                        <div class="mb-1 text-muted">@post.CreatedOn.ToShortDateString()</div>
+                        <a href="/posts/@post.Slug" class="stretched-link">Continue reading</a>
+                    </div>
+                    <div class="col-auto d-none d-lg-block">
+                        <img src="https://picsum.photos/300/250?id=@post.Id" />
+                    </div>
+                </article>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+    public Post[]? BlogPosts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        BlogPosts = new[]
+        {
+            new Post
+            {
+                Title = "Title 1",
+                Content = "Some content",
+                Slug = "post-1",
+                CreatedOn = DateTime.Now,
+            },
+            new Post
+            {
+                Title = "Title 1",
+                Content = "Some content",
+                Slug = "post-1",
+                CreatedOn = DateTime.Now,
+            },
+            new Post
+            {
+                Title = "Title 1",
+                Content = "Some content",
+                Slug = "post-1",
+                CreatedOn = DateTime.Now,
+            },
+        };
+    }
+}
