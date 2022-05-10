@@ -1,0 +1,63 @@
+﻿@using Blog.Models
+
+<h4 class="mt-5">Comments</h4>
+
+@if (!comments.Any())
+{
+    <div class="alert alert-info">
+        No comments, make some!
+    </div>
+}
+else
+{
+    <ul>
+        @foreach (var comment in comments)
+        {
+            <li>
+                <span>@comment.Author</span> commented on @comment.CreatedOn.ToString("dd.MM.yyyy HH:mm:ss")
+                <p>@comment.Text</p>
+            </li>
+        }
+    </ul>
+}
+
+<CommentNew PostId="PostId" CommentAdded="c => comments.Add(c)"></CommentNew>
+
+
+@code {
+    [Parameter]
+    public int PostId { get; set; }
+
+    List<Comment> comments = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        comments = new List<Comment>()
+        {
+            new()
+            {
+                Author = "Author 1",
+                Text = "Commented some text",
+                CreatedOn = DateTime.Now,
+            },
+            new()
+            {
+                Author = "Author 2",
+                Text = "Commented some text",
+                CreatedOn = DateTime.Now,
+            },
+            new()
+            {
+                Author = "Author 3",
+                Text = "Commented some text",
+                CreatedOn = DateTime.Now,
+            },
+            new()
+            {
+                Author = "Author 4",
+                Text = "Commented some text",
+                CreatedOn = DateTime.Now,
+            },
+        };
+    }
+}

@@ -1,0 +1,63 @@
+﻿@using Blog.Models
+@using System.ComponentModel.DataAnnotations
+
+@if (newComment == null)
+{
+    <button class="btn btn-secondary" @onclick="() => newComment = new AddComment()">Add comment</button>
+}
+else 
+{
+    <div class="col-3">
+        <EditForm Model="newComment" OnValidSubmit="CreateComment">
+            <DataAnnotationsValidator/>
+
+            <div class="mb-3">
+                <label for="title" class="form-label">Author</label>
+                <InputText id="title" class="form-control" @bind-Value="newComment.Author"></InputText>
+                <ValidationMessage For="() => newComment.Author"></ValidationMessage>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">Comment</label>
+                <InputTextArea id="content" class="form-control" @bind-Value="newComment.Text" rows="10"></InputTextArea>
+                <ValidationMessage For="() => newComment.Text"></ValidationMessage>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-secondary" @onclick="() => newComment = null">Cancel</button>
+                <button type="submit" class="btn btn-primary">Post</button>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int PostId { get; set; }
+
+    [Parameter]
+    public EventCallback<Comment> CommentAdded { get; set; }
+
+    AddComment newComment = null;
+
+    private void CreateComment()
+    {
+        var comment = new Comment
+        {
+            Author = newComment.Author,
+            Text = newComment.Text,
+            CreatedOn = DateTime.Now,
+            PostId = PostId,
+        };
+
+        CommentAdded.InvokeAsync(comment);
+        newComment = null;
+    }
+
+    public class AddComment
+    {
+        [EmailAddress, Required]
+        public string Author { get; set; }
+
+        [Required, MinLength(5)]
+        public string Text { get; set; }
+    }
+}
