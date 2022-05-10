@@ -5,7 +5,6 @@
 
 <a href="/posts/create" class="btn btn-primary">Create post</a>
 
-
 <div class="row mt-4">
     @if (BlogPosts == null)
     {
@@ -19,7 +18,7 @@
     }
     else
     {
-        @foreach (var post in BlogPosts)
+        @foreach (var post in BlogPosts.OrderByDescending(x => x.CreatedOn))
         {
             <div class="col-md-6">
                 <article class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
@@ -39,27 +38,27 @@
 
 
 @code {
-    public Post[]? BlogPosts { get; set; }
+    public List<Post> BlogPosts { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        BlogPosts = new[]
+        BlogPosts = new List<Post>
         {
-            new Post
+            new()
             {
                 Title = "Title 1",
                 Content = "Some content",
                 Slug = "post-1",
                 CreatedOn = DateTime.Now,
             },
-            new Post
+            new()
             {
                 Title = "Title 1",
                 Content = "Some content",
                 Slug = "post-1",
                 CreatedOn = DateTime.Now,
             },
-            new Post
+            new()
             {
                 Title = "Title 1",
                 Content = "Some content",

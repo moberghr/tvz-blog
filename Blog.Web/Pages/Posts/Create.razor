@@ -1,0 +1,76 @@
+﻿@page "/posts/create" 
+
+@using Blog.Models
+@using System.ComponentModel.DataAnnotations
+
+@inject NavigationManager Navigation; 
+
+<h3>Create post @post?.Title</h3>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <EditForm Model="post" OnValidSubmit="SavePost">
+            <DataAnnotationsValidator />
+
+            <div class="row mb-3">
+                <label for="title" class="col-sm-2 col-form-label">Title</label>
+                <div class="col-sm-10">
+                    <InputText id="title" class="form-control" @bind-Value="post.Title"></InputText>
+                    <ValidationMessage For="() => post.Title"></ValidationMessage>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="slug" class="col-sm-2 col-form-label">Slug</label>
+                <div class="col-sm-10">
+                    <InputText id="slug" class="form-control" @bind-Value="post.Slug"></InputText>
+                    <ValidationMessage For="() => post.Slug"></ValidationMessage>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="content" class="col-sm-2 col-form-label">Content</label>
+                <div class="col-sm-10">
+                    <InputTextArea id="content" class="form-control" @bind-Value="post.Content" rows="10"></InputTextArea>
+                    <ValidationMessage For="() => post.Content"></ValidationMessage>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+
+
+@code {
+    CreatePost post = new();
+
+    private async Task SavePost(EditContext context)
+    {
+        var newPost = new Post()
+        {
+            Slug = this.post.Slug!,
+            Title = this.post.Title!,
+            Content = this.post.Content!,
+            CreatedOn = DateTime.Now,
+        };
+
+        Navigation.NavigateTo("/posts");
+    }
+
+    class CreatePost
+    {
+        [Required, MinLength(3)]
+        public string? Slug { get; set; }
+    
+        [Required, MinLength(5)]
+        public string? Title { get; set; }
+
+        [Required, MinLength(10)]
+        public string? Content { get; set; }
+    }
+}
