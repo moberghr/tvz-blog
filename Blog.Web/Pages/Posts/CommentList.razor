@@ -1,5 +1,7 @@
 ﻿@using Blog.Models
 
+@inject HttpClient Http;
+
 <h4 class="mt-5">Comments</h4>
 
 @if (!comments.Any())
@@ -32,32 +34,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        comments = new List<Comment>()
-        {
-            new()
-            {
-                Author = "Author 1",
-                Text = "Commented some text",
-                CreatedOn = DateTime.Now,
-            },
-            new()
-            {
-                Author = "Author 2",
-                Text = "Commented some text",
-                CreatedOn = DateTime.Now,
-            },
-            new()
-            {
-                Author = "Author 3",
-                Text = "Commented some text",
-                CreatedOn = DateTime.Now,
-            },
-            new()
-            {
-                Author = "Author 4",
-                Text = "Commented some text",
-                CreatedOn = DateTime.Now,
-            },
-        };
+        comments = await Http.GetFromJsonAsync<List<Comment>>($"posts/{PostId}/comments");
     }
 }

@@ -1,6 +1,8 @@
 ﻿@page "/posts"
 @using Blog.Models
 
+@inject HttpClient Http;
+
 <h3>Posts</h3>
 
 <a href="/posts/create" class="btn btn-primary">Create post</a>
@@ -42,29 +44,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        BlogPosts = new List<Post>
-        {
-            new()
-            {
-                Title = "Title 1",
-                Content = "Some content",
-                Slug = "post-1",
-                CreatedOn = DateTime.Now,
-            },
-            new()
-            {
-                Title = "Title 1",
-                Content = "Some content",
-                Slug = "post-1",
-                CreatedOn = DateTime.Now,
-            },
-            new()
-            {
-                Title = "Title 1",
-                Content = "Some content",
-                Slug = "post-1",
-                CreatedOn = DateTime.Now,
-            },
-        };
+        BlogPosts = await Http.GetFromJsonAsync<List<Post>>("posts");
     }
 }

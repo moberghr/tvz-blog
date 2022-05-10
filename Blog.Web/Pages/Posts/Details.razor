@@ -1,6 +1,8 @@
 ﻿@page "/posts/{slug}"
 @using Blog.Models
 
+@inject HttpClient Http;
+
 @if (post != null)
 {
     <h1>@post.Title</h1>
@@ -21,13 +23,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        post = new Post()
-        {
-            Id = 4,
-            Content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mattis ultrices enim feugiat vulputate. Mauris congue, diam a bibendum fringilla, leo lectus pharetra ipsum, a egestas eros ligula a libero. Duis auctor tempor erat, vel suscipit est euismod non. Integer consequat cursus efficitur. Vivamus sollicitudin, tortor at porta porta, neque est posuere orci, in suscipit eros lorem ut ex. Fusce faucibus egestas tellus rutrum eleifend. Cras accumsan nunc eu tellus pulvinar euismod id vel ex. Cras varius porta sapien, at interdum mi porttitor quis. Aliquam faucibus felis id varius tincidunt. Quisque massa erat, imperdiet ut dui non, gravida laoreet leo. Vivamus accumsan lacus ac nulla ultricies consequat. Quisque facilisis pharetra metus, vitae sodales dui ultrices in. Nunc congue elit metus, ac fermentum odio lacinia nec. Vestibulum quis justo ex.",
-            Title = "Lorem ipsum",
-            Slug = "lorem",
-            CreatedOn = DateTime.Now,
-        };
+        post = await Http.GetFromJsonAsync<Post>($"posts/{Slug}");
     }
 }
