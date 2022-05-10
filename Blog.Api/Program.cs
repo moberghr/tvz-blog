@@ -8,7 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 builder.Services.AddDbContext<BlogContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BlogContext")));
 
@@ -22,70 +30,37 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
-app.MapGet("/posts", () => new List<Post>
+app.MapGet("/posts", (BlogContext db) => db.Posts.ToList());
+app.MapGet("/posts/{slug}", (string slug, BlogContext db) => db.Posts.Where(x => x.Slug == slug).FirstOrDefault());
+app.MapGet("/posts/{postId}/comments", (int postId, BlogContext db) => db.Comments.Where(x => x.PostId == postId).ToList());
+app.MapPost("/posts", (Post p, BlogContext db) =>
 {
-    new()
+    if (db.Posts.Any(x => x.Slug == p.Slug))
     {
-        Id = 1,
-        Title = "Title 1",
-        Content = "Some content",
-        Slug = "post-1",
-        CreatedOn = DateTime.Now,
-    },
-    new()
+        return Results.BadRequest("post with slug already exists");
+    }
+
+    var post = new Post()
     {
-        Id = 2,
-        Title = "Title 1",
-        Content = "Some content",
-        Slug = "post-1",
+        Slug = p.Slug,
+        Title = p.Title,
+        Content = p.Content,
         CreatedOn = DateTime.Now,
-    },
-    new()
-    {
-        Id = 3,
-        Title = "Title 1",
-        Content = "Some content",
-        Slug = "post-1",
-        CreatedOn = DateTime.Now,
-    },
+    };
+
+    db.Posts.Add(post);
+    db.SaveChanges();
+
+    return Results.Ok(post.Id);
 });
-
-app.MapGet("/posts/{slug}", (string slug) => new Post()
+app.MapPost("/posts/{postId}/comments", (int postId, Comment c, BlogContext db) =>
 {
-    Id = 3,
-    Title = "Title 1",
-    Content = "Some content",
-    Slug = "post-1",
-    CreatedOn = DateTime.Now,
-});
+    db.Comments.Add(c);
+    db.SaveChanges();
 
-app.MapGet("/posts/{postId}/comments", (int postId) => new List<Comment>()
-{
-    new()
-    {
-        Author = "Author 1",
-        Text = "Commented some text",
-        CreatedOn = DateTime.Now,
-    },
-    new()
-    {
-        Author = "Author 2",
-        Text = "Commented some text",
-        CreatedOn = DateTime.Now,
-    },
-    new()
-    {
-        Author = "Author 3",
-        Text = "Commented some text",
-        CreatedOn = DateTime.Now,
-    },
-    new()
-    {
-        Author = "Author 4",
-        Text = "Commented some text",
-        CreatedOn = DateTime.Now,
-    },
+    return Results.Ok();
 });
 
 app.Run();
